@@ -6,15 +6,46 @@ const port = 4000;
 app.use(cors());
 require("dotenv").config(); // 모듈 불러오기
 
-const plan = [
+const plans = [
   {
-    name: "",
-    city: "",
-    startDate: "",
-    endDate: "",
+    userId: "0",
+    name: "일본 여행",
+    city: ["도쿄", "오사카"],
+    startDate: "2023.7.12",
+    endDate: "2023.7.15",
     selectPlaces: [
       {
-        name: "",
+        name: "오마카세",
+        rating: "",
+        user_rating: "",
+        isSelect: true,
+        day: "",
+      },
+      {
+        name: "오사카 성",
+        rating: "",
+        user_rating: "",
+        isSelect: true,
+        day: "",
+      },
+    ],
+  },
+  {
+    userId: "0",
+    name: "중국 여행",
+    city: ["베이징", "텐진", "청두"],
+    startDate: "2023.8.12",
+    endDate: "2023.8.20",
+    selectPlaces: [
+      {
+        name: "중국집",
+        rating: "",
+        user_rating: "",
+        isSelect: true,
+        day: "",
+      },
+      {
+        name: "중국 성",
         rating: "",
         user_rating: "",
         isSelect: true,
@@ -23,6 +54,22 @@ const plan = [
     ],
   },
 ];
+
+// 사용자가 작성한 플랜 조회하는 API
+app.get("/api/plan/:userId", async (req, res) => {
+  console.log(req.params);
+  console.log(req.params.userId);
+  res.json(plans.filter((plan) => plan.userId === req.params.userId));
+});
+
+// // 특정 여행 계획을 조회하는 API
+// app.get("/api/plan/:planId", async (req, res) => {});
+
+app.post("/api/plan", async (req, res) => {});
+
+app.put("/api/plan/:planId", async (req, res) => {});
+
+app.delete("/api/plan/:planId", async (req, res) => {});
 
 app.get("/api/search", async (req, res) => {
   const { keyword, latitude, longitude, radius } = req.query;
