@@ -5,97 +5,113 @@ const axios = require("axios");
 const port = 4000;
 app.use(cors());
 require("dotenv").config(); // 모듈 불러오기
+app.use(express.json());
 
-const plans = [
-  {
-    userId: "0",
-    planId: "1",
-    name: "일본 여행",
-    city: ["도쿄", "오사카"],
-    startDate: "2023.7.12",
-    endDate: "2023.7.15",
-    selectPlaces: [
-      {
-        name: "오마카세",
-        rating: "",
-        user_rating: "",
-        isSelect: true,
-        day: "",
-      },
-      {
-        name: "오사카 성",
-        rating: "",
-        user_rating: "",
-        isSelect: true,
-        day: "",
-      },
-    ],
-  },
-  {
-    userId: "0",
-    planId: "2",
-    name: "중국 여행",
-    city: ["베이징", "텐진", "청두"],
-    startDate: "2023.8.12",
-    endDate: "2023.8.20",
-    selectPlaces: [
-      {
-        name: "중국집",
-        rating: "",
-        user_rating: "",
-        isSelect: true,
-        day: "",
-      },
-      {
-        name: "중국 성",
-        rating: "",
-        user_rating: "",
-        isSelect: true,
-        day: "",
-      },
-    ],
-  },
+let plans = [
+  // {
+  //   user_id: "0",
+  //   plan_id: "1",
+  //   name: "일본 여행",
+  //   city: ["도쿄", "오사카"],
+  //   startDate: "2023.7.12",
+  //   endDate: "2023.7.15",
+  //   selectPlaces: [
+  //     {
+  //       palce_id: "d23152",
+  //       name: "오마카세",
+  //       rating: "",
+  //       user_rating: "",
+  //       isSelect: true,
+  //       day: "",
+  //     },
+  //     {
+  //       palce_id: "d231rqwe52",
+  //       name: "오사카 성",
+  //       rating: "",
+  //       user_rating: "",
+  //       isSelect: true,
+  //       day: "",
+  //     },
+  //   ],
+  // },
+  // {
+  //   user_id: "0",
+  //   plan_id: "2",
+  //   name: "중국 여행",
+  //   city: ["베이징", "텐진", "청두"],
+  //   startDate: "2023.8.12",
+  //   endDate: "2023.8.20",
+  //   selectPlaces: [
+  //     {
+  //       palce_id: "d23159823742",
+  //       name: "중국집",
+  //       rating: "",
+  //       user_rating: "",
+  //       isSelect: true,
+  //       day: "",
+  //     },
+  //     {
+  //       palce_id: "d2315760346552",
+  //       name: "중국 성",
+  //       rating: "",
+  //       user_rating: "",
+  //       isSelect: true,
+  //       day: "",
+  //     },
+  //   ],
+  // },
 ];
 
 // 사용자가 작성한 플랜 조회하는 API
-app.get("/api/plan/:userId", async (req, res) => {
+app.get("/api/plan/:user_id", async (req, res) => {
   console.log(req.params);
-  console.log(req.params.userId);
-  res.json(plans.filter((plan) => plan.userId === req.params.userId));
+  console.log(req.params.user_id);
+  res.json(plans.filter((plan) => plan.user_id === req.params.user_id));
 });
 
 // 특정 여행 계획을 조회하는 API
-app.get("/api/plan/:planId", async (req, res) => {
+app.get("/api/plan/:user_id/:plan_id", async (req, res) => {
   console.log(req.params);
-  console.log(req.params.planId);
-  res.json(plans.find((plan) => plan.planId === req.params.planId));
+  console.log(req.params.plan_id);
+  res.json(plans.find((plan) => plan.plan_id === req.params.plan_id));
 });
+
+let num = 0;
 
 // 여행 계획을 저장하는 API
 app.post("/api/plan", async (req, res) => {
-  const newPlan = req.body;
+  const newPlan = {
+    ...req.body,
+    plan_id: String(num++),
+  };
   plans.push(newPlan);
   res.status(201).json(newPlan);
 });
 
 // 여행 계획을 수정하는 API
-app.put("/api/plan/:planId", async (req, res) => {
-  const { planId } = req.params;
+app.put("/api/plan/:plan_id", async (req, res) => {
+  const { plan_id } = req.params;
   const updatedPlan = req.body;
-  const index = plans.findIndex((plan) => plan.planId === planId);
+  const index = plans.findIndex((plan) => plan.plan_id === plan_id);
 
   if (index === -1) {
     res.status(404).json({ message: "여행 계획이 없습니다." });
   } else {
-    plans[index] = { ...updatedPlan, planId };
+    plans[index] = { ...updatedPlan, plan_id };
     res.json(plans[index]);
   }
 });
 
 // 여행 계획을 삭제하는 API
-app.delete("/api/plan/:planId", async (req, res) => {
-  const { planId } = req.params;
-  plans = plans.filter((plan) => plan.planId !== planId);
+app.delete("/api/plan/:plan_id", async (req, res) => {
+  const { plan_id } = req.params;
+  console.log(plan_id);
+  try {
+    plans = plans.filter((plan) => plan.plan_id !== plan_id);
+  } catch (err) {
+    console.log(err);
+  }
+
   res.sendStatus(204);
 });
 
