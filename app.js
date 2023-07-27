@@ -62,6 +62,64 @@ let plans = [
   // },
 ];
 
+let posts = Array.from(Array(40).keys()).map((post_id) => {
+  const tags = ["식도락", "빡빡한", "여유로운", "관광지", "휴양지", "자연"][
+    Math.floor(Math.random() * 6)
+  ];
+  return {
+    post_id,
+    title: `테스트 제목입니다. ${post_id}`,
+    content: `테스트 내용입니다. ${post_id}`,
+    tags,
+    user_id: Math.floor(Math.random() * 3),
+    plan_id: Math.floor(Math.random() * 3),
+  };
+});
+
+// 모든 게시글 조회
+app.get("/api/post", async (req, res) => {
+  res.json([...posts]);
+});
+
+let postId = 100;
+
+// 게시글 등록
+app.post("/api/post", async (req, res) => {
+  const newPost = {
+    ...req.body,
+    post_id: postId++,
+  };
+  posts.push(newPost);
+  res.status(201).json(newPost);
+});
+
+// 게시글 수정
+app.put("/api/post/:post_id", async (req, res) => {
+  const { post_id } = req.params;
+  const updatedPost = req.body;
+  const index = posts.findIndex((post) => post.post_id === post_id);
+
+  if (index === -1) {
+    res.status(404).json({ message: "여행 계획이 없습니다." });
+  } else {
+    posts[index] = { ...updatedPost, post_id };
+    res.json(posts[index]);
+  }
+});
+
+// 게시글 삭제
+app.delete("/api/post/:post_id", async (req, res) => {
+  const { post_id } = req.params;
+
+  try {
+    posts = posts.filter((post) => post.post_id !== post_id);
+  } catch (err) {
+    console.log(err);
+  }
+
+  res.sendStatus(204);
+});
+
 // 사용자가 작성한 플랜 조회하는 API
 app.get("/api/plan/:user_id", async (req, res) => {
   console.log(req.params);
