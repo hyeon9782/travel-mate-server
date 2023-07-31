@@ -7,65 +7,72 @@ app.use(cors());
 require("dotenv").config(); // 모듈 불러오기
 app.use(express.json());
 
-let plans = [
-  // {
-  //   user_id: "0",
-  //   plan_id: "1",
-  //   name: "일본 여행",
-  //   city: ["도쿄", "오사카"],
-  //   startDate: "2023.7.12",
-  //   endDate: "2023.7.15",
-  //   selectPlaces: [
-  //     {
-  //       palce_id: "d23152",
-  //       name: "오마카세",
-  //       rating: "",
-  //       user_rating: "",
-  //       isSelect: true,
-  //       day: "",
-  //     },
-  //     {
-  //       palce_id: "d231rqwe52",
-  //       name: "오사카 성",
-  //       rating: "",
-  //       user_rating: "",
-  //       isSelect: true,
-  //       day: "",
-  //     },
-  //   ],
-  // },
-  // {
-  //   user_id: "0",
-  //   plan_id: "2",
-  //   name: "중국 여행",
-  //   city: ["베이징", "텐진", "청두"],
-  //   startDate: "2023.8.12",
-  //   endDate: "2023.8.20",
-  //   selectPlaces: [
-  //     {
-  //       palce_id: "d23159823742",
-  //       name: "중국집",
-  //       rating: "",
-  //       user_rating: "",
-  //       isSelect: true,
-  //       day: "",
-  //     },
-  //     {
-  //       palce_id: "d2315760346552",
-  //       name: "중국 성",
-  //       rating: "",
-  //       user_rating: "",
-  //       isSelect: true,
-  //       day: "",
-  //     },
-  //   ],
-  // },
-];
-
-let posts = Array.from(Array(40).keys()).map((post_id) => {
-  const tags = ["식도락", "빡빡한", "여유로운", "관광지", "휴양지", "자연"][
-    Math.floor(Math.random() * 6)
+let plans = Array.from(Array(10).keys()).map((plan_id) => {
+  const cities = [
+    {
+      city: "나가사키",
+      country: "일본",
+      isDomestic: false,
+      region: "일본",
+      location: { lat: 33.4825, lng: 126.5311 },
+      related: ["나가사키", "사가", "사세보", "운젠"],
+      isSelect: false,
+    },
+    {
+      city: "오키나와",
+      country: "일본",
+      isDomestic: false,
+      region: "일본",
+      location: { lat: 33.4825, lng: 126.5311 },
+      related: ["오키나와"],
+      isSelect: false,
+    },
   ];
+
+  const selectedPlaces = [
+    {
+      place_id: "dasjhd8u6fduat",
+      name: "황제짜장",
+      user_ratings_total: "3.6",
+      rating: "34",
+      geometry: {
+        location: { lat: 33.4825, lng: 126.5311 },
+      },
+      isSelect: true,
+      day: 1,
+      order: 1,
+    },
+    {
+      place_id: "d892654d8u6fduat",
+      name: "인천짜장",
+      user_ratings_total: "7.6",
+      rating: "67",
+      geometry: {
+        location: { lat: 37.426998, lng: 126.674815 },
+      },
+      isSelect: true,
+      day: 1,
+      order: 2,
+    },
+  ];
+  return {
+    plan_id,
+    user_id: "3",
+    cities,
+    period: ["2023-08-10", "2023-08-12"],
+    selectedPlaces,
+  };
+});
+
+let posts = Array.from(Array(20).keys()).map((post_id) => {
+  const tags = [];
+  for (let i = 0; i < 3; i++) {
+    tags.push(
+      ["식도락", "빡빡한", "여유로운", "관광지", "휴양지", "자연"][
+        Math.floor(Math.random() * 6)
+      ]
+    );
+  }
   return {
     post_id,
     title: `테스트 제목입니다. ${post_id}`,
@@ -76,9 +83,14 @@ let posts = Array.from(Array(40).keys()).map((post_id) => {
   };
 });
 
-// 모든 게시글 조회
+// 모든 게시글 조회 (페이징)
 app.get("/api/post", async (req, res) => {
-  res.json([...posts]);
+  const page = Number(req.query.page);
+  const pageSize = 8; // 한 페이지에 표시할 게시글 수
+  const startIndex = (page - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const newPosts = posts.slice(startIndex, endIndex);
+  res.json([...newPosts]);
 });
 
 let postId = 100;
@@ -128,10 +140,11 @@ app.get("/api/plan/:user_id", async (req, res) => {
 });
 
 // 특정 여행 계획을 조회하는 API
-app.get("/api/plan/:user_id/:plan_id", async (req, res) => {
+app.get("/api/plan/detail/:plan_id", async (req, res) => {
   console.log(req.params);
   console.log(req.params.plan_id);
-  res.json(plans.find((plan) => plan.plan_id === req.params.plan_id));
+  const plan_id = Number(req.params.plan_id);
+  res.json(plans.find((plan) => plan.plan_id === plan_id));
 });
 
 let num = 0;
