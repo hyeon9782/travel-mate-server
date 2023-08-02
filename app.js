@@ -35,6 +35,7 @@ let plans = Array.from(Array(10).keys()).map((plan_id) => {
       name: "황제짜장",
       user_ratings_total: "3.6",
       rating: "34",
+      types: ["food"],
       geometry: {
         location: { lat: 33.4825, lng: 126.5311 },
       },
@@ -47,6 +48,7 @@ let plans = Array.from(Array(10).keys()).map((plan_id) => {
       name: "인천짜장",
       user_ratings_total: "7.6",
       rating: "67",
+      types: ["food"],
       geometry: {
         location: { lat: 37.426998, lng: 126.674815 },
       },
@@ -57,14 +59,14 @@ let plans = Array.from(Array(10).keys()).map((plan_id) => {
   ];
   return {
     plan_id,
-    user_id: "3",
+    user_id: "hyeon9782@gmail.com",
     cities,
     period: ["2023-08-10", "2023-08-12"],
     selectedPlaces,
   };
 });
 
-let posts = Array.from(Array(20).keys()).map((post_id) => {
+let posts = Array.from(Array(100).keys()).map((post_id) => {
   const tags = [];
   for (let i = 0; i < 3; i++) {
     tags.push(
@@ -82,6 +84,8 @@ let posts = Array.from(Array(20).keys()).map((post_id) => {
     plan_id: Math.floor(Math.random() * 3),
   };
 });
+
+/////////////////////////////////////// 게시글 시작 ///////////////////////////////////////////
 
 // 모든 게시글 조회 (페이징)
 app.get("/api/post", async (req, res) => {
@@ -132,17 +136,21 @@ app.delete("/api/post/:post_id", async (req, res) => {
   res.sendStatus(204);
 });
 
+/////////////////////////////////////// 게시글 끝 ///////////////////////////////////////////
+
+/////////////////////////////////////// 플랜 시작 ///////////////////////////////////////////
+
 // 사용자가 작성한 플랜 조회하는 API
-app.get("/api/plan/:user_id", async (req, res) => {
-  console.log(req.params);
-  console.log(req.params.user_id);
-  res.json(plans.filter((plan) => plan.user_id === req.params.user_id));
+app.get("/api/plan", async (req, res) => {
+  const user_id = req.query.user_id;
+  console.log(user_id);
+
+  const newPlans = plans.filter((plan) => plan.user_id === user_id);
+  res.json([...newPlans]);
 });
 
 // 특정 여행 계획을 조회하는 API
-app.get("/api/plan/detail/:plan_id", async (req, res) => {
-  console.log(req.params);
-  console.log(req.params.plan_id);
+app.get("/api/plan/:plan_id", async (req, res) => {
   const plan_id = Number(req.params.plan_id);
   res.json(plans.find((plan) => plan.plan_id === plan_id));
 });
@@ -163,7 +171,7 @@ app.post("/api/plan", async (req, res) => {
 app.put("/api/plan/:plan_id", async (req, res) => {
   const { plan_id } = req.params;
   const updatedPlan = req.body;
-  const index = plans.findIndex((plan) => plan.plan_id === plan_id);
+  const index = plans.findIndex((plan) => plan.plan_id === Number(plan_id));
 
   if (index === -1) {
     res.status(404).json({ message: "여행 계획이 없습니다." });
@@ -178,13 +186,15 @@ app.delete("/api/plan/:plan_id", async (req, res) => {
   const { plan_id } = req.params;
   console.log(plan_id);
   try {
-    plans = plans.filter((plan) => plan.plan_id !== plan_id);
+    plans = plans.filter((plan) => plan.plan_id !== Number(plan_id));
   } catch (err) {
     console.log(err);
   }
 
   res.sendStatus(204);
 });
+
+/////////////////////////////////////// 플랜 끝 ///////////////////////////////////////////
 
 app.get("/api/search", async (req, res) => {
   const { keyword, latitude, longitude, radius } = req.query;
