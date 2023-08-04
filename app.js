@@ -3,7 +3,13 @@ const app = express();
 const cors = require("cors");
 const axios = require("axios");
 const port = 4000;
-app.use(cors());
+app.use(
+  cors({
+    origin: ["https://travel-mate-eta.vercel.app"], // 클라이언트 주소
+    methods: ["GET", "POST", "PUT", "DELETE"], // 허용할 요청 메서드
+    credentials: true, // 인증 정보 허용 (옵션)
+  })
+);
 require("dotenv").config(); // 모듈 불러오기
 app.use(express.json());
 
@@ -90,11 +96,11 @@ let posts = Array.from(Array(100).keys()).map((post_id) => {
 // 모든 게시글 조회 (페이징)
 app.get("/api/post", async (req, res) => {
   const page = Number(req.query.page);
-  const pageSize = 8; // 한 페이지에 표시할 게시글 수
+  const pageSize = 7; // 한 페이지에 표시할 게시글 수
   const startIndex = (page - 1) * pageSize;
   const endIndex = startIndex + pageSize;
-  const newPosts = posts.slice(startIndex, endIndex);
-  res.json([...newPosts]);
+  const newPosts = [...posts];
+  res.json(newPosts.reverse().slice(startIndex, endIndex));
 });
 
 let postId = 100;
