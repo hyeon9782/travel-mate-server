@@ -226,9 +226,9 @@ app.get("/api/search", async (req, res) => {
   }
 });
 
-module.exports = app;
+// module.exports = app;
 
-// // 포트 넘버 설정
-// app.listen(port, () => {
-//   console.log(`Server is running on port ${port}`);
-// });
+// 포트 넘버 설정
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
