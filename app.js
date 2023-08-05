@@ -3,13 +3,7 @@ const app = express();
 const cors = require("cors");
 const axios = require("axios");
 const port = 4000;
-app.use(
-  cors({
-    origin: ["https://travel-mate-eta.vercel.app"], // 클라이언트 주소
-    methods: ["GET", "POST", "PUT", "DELETE"], // 허용할 요청 메서드
-    credentials: true, // 인증 정보 허용 (옵션)
-  })
-);
+app.use(cors());
 require("dotenv").config(); // 모듈 불러오기
 app.use(express.json());
 
