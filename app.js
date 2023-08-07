@@ -80,6 +80,12 @@ let posts = Array.from(Array(100).keys()).map((post_id) => {
     title: `테스트 제목입니다. ${post_id}`,
     content: `테스트 내용입니다. ${post_id}`,
     tags,
+    category: ["동행 모집", "여행 질문"][Math.floor(Math.random() * 2)],
+    deadline: ["2023.08.12", "2023.08.01", "2023.10.01"][
+      Math.floor(Math.random() * 3)
+    ],
+    views: [35, 64, 13, 46, 23, 99, 0, 1, 82][Math.floor(Math.random() * 8)],
+    user_name: ["개똥이", "복실이", "튼튼이"][Math.floor(Math.random() * 3)],
     user_id: Math.floor(Math.random() * 3),
     plan_id: Math.floor(Math.random() * 3),
   };
