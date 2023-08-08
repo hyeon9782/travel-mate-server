@@ -95,11 +95,20 @@ let posts = Array.from(Array(100).keys()).map((post_id) => {
 
 // 모든 게시글 조회 (페이징)
 app.get("/api/post", async (req, res) => {
-  const page = Number(req.query.page);
+  const { page, category } = req.query;
+  console.log(category);
   const pageSize = 7; // 한 페이지에 표시할 게시글 수
-  const startIndex = (page - 1) * pageSize;
+  const startIndex = (Number(page) - 1) * pageSize;
   const endIndex = startIndex + pageSize;
-  const newPosts = [...posts];
+  let newPosts = [];
+  if (category !== "전체") {
+    newPosts = posts.filter((post) => post.category === category);
+  } else {
+    console.log("없음");
+    newPosts = [...posts];
+  }
+  console.log(newPosts);
+
   res.json(newPosts.reverse().slice(startIndex, endIndex));
 });
 
