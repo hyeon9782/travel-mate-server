@@ -97,7 +97,7 @@ let posts = Array.from(Array(100).keys()).map((post_id) => {
 app.get("/api/post", async (req, res) => {
   const { page, category } = req.query;
   console.log(category);
-  const pageSize = 7; // 한 페이지에 표시할 게시글 수
+  const pageSize = 5; // 한 페이지에 표시할 게시글 수
   const startIndex = (Number(page) - 1) * pageSize;
   const endIndex = startIndex + pageSize;
   let newPosts = [];
@@ -107,9 +107,17 @@ app.get("/api/post", async (req, res) => {
     console.log("없음");
     newPosts = [...posts];
   }
-  console.log(newPosts);
+  // console.log(newPosts);
 
   res.json(newPosts.reverse().slice(startIndex, endIndex));
+});
+
+app.get("/api/post/:post_id", async (req, res) => {
+  const { post_id } = req.params;
+  console.log(post_id);
+  const post = posts.find((post) => post.post_id === Number(post_id));
+  console.log(post);
+  res.json(post);
 });
 
 let postId = 100;
