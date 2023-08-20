@@ -7,7 +7,7 @@ app.use(cors());
 require("dotenv").config(); // 모듈 불러오기
 app.use(express.json());
 
-let plans = Array.from(Array(10).keys()).map((plan_id) => {
+let plans = Array.from(Array(1).keys()).map((plan_id) => {
   const cities = [
     {
       city: "나가사키",
@@ -136,7 +136,7 @@ app.post("/api/post", async (req, res) => {
 app.put("/api/post/:post_id", async (req, res) => {
   const { post_id } = req.params;
   const updatedPost = req.body;
-  const index = posts.findIndex((post) => post.post_id === post_id);
+  const index = posts.findIndex((post) => post.post_id === Number(post_id));
 
   if (index === -1) {
     res.status(404).json({ message: "여행 계획이 없습니다." });
@@ -151,7 +151,7 @@ app.delete("/api/post/:post_id", async (req, res) => {
   const { post_id } = req.params;
 
   try {
-    posts = posts.filter((post) => post.post_id !== post_id);
+    posts = posts.filter((post) => post.post_id !== Number(post_id));
   } catch (err) {
     console.log(err);
   }
@@ -243,7 +243,7 @@ app.get("/api/search", async (req, res) => {
   }
 });
 
-// module.exports = app;
+///////////////////////////////////// 유저 시작 ////////////////////////////////////////////
 
 // 포트 넘버 설정
 app.listen(port, () => {
