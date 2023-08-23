@@ -39,6 +39,7 @@ let plans = Array.from(Array(1).keys()).map((plan_id) => {
       geometry: {
         location: { lat: 33.4825, lng: 126.5311 },
       },
+      memo: "테스트 메모입니다! 1",
       isSelect: true,
       day: 1,
       order: 1,
@@ -52,6 +53,7 @@ let plans = Array.from(Array(1).keys()).map((plan_id) => {
       geometry: {
         location: { lat: 37.426998, lng: 126.674815 },
       },
+      memo: "테스트 메모입니다! 2",
       isSelect: true,
       day: 1,
       order: 2,
@@ -60,6 +62,7 @@ let plans = Array.from(Array(1).keys()).map((plan_id) => {
   return {
     plan_id,
     user_id: "hyeon9782@gmail.com",
+    title: "먹부림 여행",
     cities,
     period: ["2023-08-10", "2023-08-12"],
     selectedPlaces,
@@ -175,17 +178,22 @@ app.get("/api/plan", async (req, res) => {
 // 특정 여행 계획을 조회하는 API
 app.get("/api/plan/:plan_id", async (req, res) => {
   const plan_id = Number(req.params.plan_id);
-  res.json(plans.find((plan) => plan.plan_id === plan_id));
+  const plan = plans.find((plan) => plan.plan_id === plan_id);
+  console.log(plan);
+  res.json(plan);
 });
 
-let num = 0;
+let num = 425;
 
 // 여행 계획을 저장하는 API
 app.post("/api/plan", async (req, res) => {
+  console.log("-----------------plan-------------------");
+  console.log(req.body);
   const newPlan = {
     ...req.body,
-    plan_id: String(num++),
+    plan_id: num++,
   };
+
   plans.push(newPlan);
   res.status(201).json(newPlan);
 });
