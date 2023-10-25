@@ -1,10 +1,11 @@
+require("dotenv").config(); // 모듈 불러오기
 const express = require("express");
 const app = express();
 const cors = require("cors");
 const axios = require("axios");
 const port = 4000;
 app.use(cors());
-require("dotenv").config(); // 모듈 불러오기
+
 app.use(express.json());
 
 let plans = Array.from(Array(1).keys()).map((plan_id) => {
@@ -42,7 +43,7 @@ let plans = Array.from(Array(1).keys()).map((plan_id) => {
       memo: "테스트 메모입니다! 1",
       isSelect: true,
       day: 1,
-      order: 1,
+      order: 0,
     },
     {
       place_id: "d892654d8u6fduat",
@@ -56,7 +57,21 @@ let plans = Array.from(Array(1).keys()).map((plan_id) => {
       memo: "테스트 메모입니다! 2",
       isSelect: true,
       day: 1,
-      order: 2,
+      order: 1,
+    },
+    {
+      place_id: "d8926509321574d8u6fduat",
+      name: "마라탕맛집",
+      user_ratings_total: "8.6",
+      rating: "75",
+      types: ["food"],
+      geometry: {
+        location: { lat: 37.426998, lng: 126.674815 },
+      },
+      memo: "테스트 메모입니다! 3",
+      isSelect: true,
+      day: 2,
+      order: 0,
     },
   ];
   return {
@@ -64,7 +79,7 @@ let plans = Array.from(Array(1).keys()).map((plan_id) => {
     user_id: "hyeon9782@gmail.com",
     title: "먹부림 여행",
     cities,
-    period: ["2023-08-10", "2023-08-12"],
+    period: ["2023-08-10", "2023-08-11"],
     selectedPlaces,
   };
 });
@@ -115,6 +130,18 @@ app.get("/api/post", async (req, res) => {
   res.json(newPosts.reverse().slice(startIndex, endIndex));
 });
 
+// 유저 게시글 조회
+app.get("/api/post/user", async (req, res) => {
+  const { userId } = req.query;
+  console.log(userId);
+
+  const newPosts = posts.filter((post) => post.user_id === userId);
+  console.log(newPosts);
+
+  res.json(newPosts.reverse());
+});
+
+// 게시글 상세 조회
 app.get("/api/post/:post_id", async (req, res) => {
   const { post_id } = req.params;
   console.log(post_id);
@@ -127,11 +154,17 @@ let postId = 100;
 
 // 게시글 등록
 app.post("/api/post", async (req, res) => {
+  console.log("게시글 등록");
+
   const newPost = {
     ...req.body,
     post_id: postId++,
   };
+
+  console.log(newPost);
   posts.push(newPost);
+  console.log(posts.at(-1));
+  console.log("끝");
   res.status(201).json(newPost);
 });
 
@@ -230,7 +263,7 @@ app.delete("/api/plan/:plan_id", async (req, res) => {
 app.get("/api/search", async (req, res) => {
   const { keyword, latitude, longitude, radius } = req.query;
   const params = new URLSearchParams();
-
+  console.log(process.env.NODE_ENV_GOOGLE_API_KEY);
   params.set("query", keyword);
   // 지정한 좌표와 검색 반경 추가
   params.set("location", `${latitude},${longitude}`);
